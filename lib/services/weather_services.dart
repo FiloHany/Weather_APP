@@ -5,7 +5,7 @@ import 'package:weatherapp/models/weather_model.dart';
 /// Service class for fetching weather data from the WeatherAPI.
 class WeatherServices {
   final String baseUrl = 'http://api.weatherapi.com/v1';
-  final String apiKey = 'API_KEY';
+  final String apiKey = '4fce9ca40e3c455f8f6160639250403';
 
   /// Fetches weather data for the given [cityName].
   ///

@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:weatherapp/models/weather_model.dart';
-import 'package:weatherapp/providers/weather_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weatherapp/cubit/weather_cubit/weather_cubit.dart';
 import 'package:weatherapp/services/weather_services.dart';
 
 /// Search view for entering a city name and fetching weather data.
 class SearchView extends StatelessWidget {
-  /// Callback to update the UI after a search.
-  final VoidCallback? updateUI;
 
-  SearchView({this.updateUI, Key? key}) : super(key: key);
+  SearchView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,16 +29,11 @@ class SearchView extends StatelessWidget {
           child: TextField(
             onChanged: (value) => cityName = value,
             onSubmitted: (value) async {
-              if (value.trim().isEmpty) return;
-              cityName = value.trim();
-              final service = WeatherServices();
-              final weather = await service.getWeather(cityName: cityName!);
-              Provider.of<WeatherProvider>(context, listen: false).weatherData =
-                  weather;
-              Provider.of<WeatherProvider>(context, listen: false).cityName =
-                  cityName;
+              cityName = value;
+              BlocProvider.of<WeatherCubit>(context)
+                  .getWeather(cityName: cityName!.trim());
+              BlocProvider.of<WeatherCubit>(context).cityName = cityName;
               Navigator.pop(context);
-              updateUI?.call();
             },
             decoration: InputDecoration(
               contentPadding:
@@ -53,15 +45,10 @@ class SearchView extends StatelessWidget {
                 builder: (context) => GestureDetector(
                   onTap: () async {
                     if (cityName == null || cityName!.trim().isEmpty) return;
-                    final service = WeatherServices();
-                    final weather =
-                        await service.getWeather(cityName: cityName!.trim());
-                    Provider.of<WeatherProvider>(context, listen: false)
-                        .weatherData = weather;
-                    Provider.of<WeatherProvider>(context, listen: false)
-                        .cityName = cityName;
+                    BlocProvider.of<WeatherCubit>(context)
+                        .getWeather(cityName: cityName!.trim());
+                    BlocProvider.of<WeatherCubit>(context).cityName = cityName;
                     Navigator.pop(context);
-                    updateUI?.call();
                   },
                   child: const Icon(Icons.search),
                 ),

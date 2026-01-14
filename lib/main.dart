@@ -1,15 +1,19 @@
 // Entry point for the WeatherApp Flutter application.
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:weatherapp/cubit/weather_cubit/weather_cubit.dart';
+import 'package:weatherapp/cubit/weather_cubit/weather_state.dart';
 import 'package:weatherapp/providers/weather_provider.dart';
+import 'package:weatherapp/services/weather_services.dart';
 import 'package:weatherapp/views/home_view.dart';
 
 /// The main function initializes the app and provides the [WeatherProvider]
 /// to the widget tree using [ChangeNotifierProvider].
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => WeatherProvider(),
+    BlocProvider(
+      create: (context) => WeatherCubit(WeatherServices()),
       child: const WeatherApp(),
     ),
   );
@@ -21,14 +25,25 @@ class WeatherApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final weatherProvider = Provider.of<WeatherProvider>(context);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch:
-            weatherProvider.weatherData?.getThemeColor() ?? Colors.blue,
-      ),
-      home: HomeView(),
+    return BlocBuilder<WeatherCubit, WeatherState>(
+      builder: (context, state) {
+        final weatherModel = BlocProvider.of<WeatherCubit>(context).weatherModel;
+        final themeColor = weatherModel?.getThemeColor() ?? Colors.blue;
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: themeColor,
+            scaffoldBackgroundColor: themeColor.shade50,
+            appBarTheme: AppBarTheme(
+              backgroundColor: themeColor,
+            ),
+            floatingActionButtonTheme: FloatingActionButtonThemeData(
+              backgroundColor: themeColor,
+            ),
+          ),
+          home: HomeView(),
+        );
+      },
     );
   }
 }

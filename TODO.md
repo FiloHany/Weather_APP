@@ -1,0 +1,4 @@
+- [x] Remove 'cubit: ^0.1.2' from pubspec.yaml
+- [x] Update main.dart to use BlocProvider instead of Provider
+- [x] Fix issues in home_view.dart: remove unused weatherData field, fix undefined cityName, add proper null checks, fix the empty Text
+- [ ] Run flutter pub get
